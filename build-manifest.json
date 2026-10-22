@@ -1,0 +1,19 @@
+{
+  "nextVersion": "16.4.2",
+  "upstreamRepository": "https://github.com/vercel/next.js",
+  "upstreamCommit": "2864b1772c37242a9b40ab4d366eb7d368c2a070",
+  "patch": "patches/webpack-loader-additional-roots.patch",
+  "patchSha256": "4f7028ec5249b641d13f739147676bd9ac4893f6b2a1ec21e5aa443c7c203add",
+  "sourceFile": "turbopack/crates/turbopack-node/src/transforms/webpack.rs",
+  "patchedSourceSha256": "2c263e2a1d0052f2361d889904da97b680851f477f733859682d56316a5dc7ef",
+  "cargoLockSha256": "2c9d1258bc518f6ab2c49b3b7530f6871a816a804934fb9ad009fd1ea0bf7489",
+  "rustToolchain": "nightly-2026-08-20",
+  "target": "aarch64-apple-darwin",
+  "features": "image-extended,tracing/release_max_level_trace",
+  "rustFlags": "--cfg tokio_unstable -Zshare-generics=y -Zthreads=8 -Zunstable-options -Dwarnings -C linker=cc",
+  "officialPackageTarball": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.2.tgz",
+  "officialPackageIntegrity": "sha512-ONkhFvZNFWlsEHOM/81AtxdyuJP2KRYKYR0JxPwvcu1AuPMMMgcL+wW2luldJvMtZwKtUxoSkCychW5wIeoYSw==",
+  "packageMetadataSha256": "b6a453fd34787c9c7e4b2b44455a122176f6eef71173c87075c8873a2d172efe",
+  "patchedRepository": "https://github.com/JOsacky/next.js",
+  "patchedCommit": "348988a542e4cd6036fe71c7fbc22f297f027bd3"
+}
