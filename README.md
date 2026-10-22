@@ -1,4 +1,24 @@
-# Patched Next.js native bindings
+# Historical Next.js native binding workaround
+
+**Superseded for our applications on 2026-10-22.** We now use official Next.js
+16.4.2 platform packages and one global pnpm virtual-store configuration on every
+platform. The release below remains immutable for historical branches and source
+review; new applications should use supported framework configuration first.
+
+For Sentry-instrumented AI/MCP SDKs, Next.js
+[`serverExternalPackages`](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverExternalPackages)
+lets Node load the SDKs and Sentry instrument them at runtime while keeping Sentry
+build instrumentation enabled. With Sentry 11, declare the matching
+`@sentry/server-runtime-injection` runtime dependency and include its dynamic
+worker using `outputFileTracingIncludes` when producing traced deployment
+artifacts. Validate actual automatic spans from the copied deployment artifact
+on each supported Node version; our Node 22 and Node 26 tests captured OpenAI,
+Anthropic and MCP spans without a custom native binding or manual tracing wrapper.
+
+The general external-loader limitation remains in the stable/canary releases
+checked on that date; [the upstream fix](https://github.com/vercel/next.js/pull/100598)
+is still open. The application-side solution avoids that loader path rather than
+requiring a framework fork. The rest of this document records the old workaround.
 
 A temporary, narrowly scoped patch for Next.js 16.4.2's Turbopack webpack-loader
 bridge. Registered additional filesystem roots can already resolve dependencies,
@@ -66,7 +86,7 @@ lockfiles, extra edits, wrong commits and wrong native architectures. Applicatio
 production builds and instrumentation behavior require separate integration
 validation before releasing a binary. These scripts do not publish releases.
 
-## Consume a reviewed release
+## Historical consumption of a reviewed release
 
 Keep the exact reviewed Next.js version pinned and declare the native artifact as
 an explicit root optional dependency:
