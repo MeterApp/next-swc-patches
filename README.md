@@ -68,12 +68,45 @@ validation before releasing a binary. These scripts do not publish releases.
 
 ## Consume a reviewed release
 
-Pin the version-specific Darwin binding override to an immutable public release
-tarball in `pnpm-workspace.yaml`. Commit the resulting lockfile integrity. Keep
-Next.js pinned to the matching version. No custom-binding environment variable
-is needed; Next.js loads the replacement through its ordinary package entrypoint.
-Never replace an already released tarball. Publish a new release identifier for
-any binary change. Remove the override when an official Next.js version includes
-the fix and passes the same integration checks.
+Keep the exact reviewed Next.js version pinned and declare the native artifact as
+an explicit root optional dependency:
+
+```json
+{
+  "optionalDependencies": {
+    "@next/swc-darwin-arm64": "https://github.com/MeterApp/next-swc-patches/releases/download/next-16.4.2-loader-roots-r1/next-swc-darwin-arm64.tgz"
+  }
+}
+```
+
+pnpm 12 correctly blocks URL subdependencies by default. Do not disable
+`blockExoticSubdeps` and do not use a URL override of Next's optional child.
+Instead, the bounded `readPackage` hook in [examples/pnpmfile.mjs](examples/pnpmfile.mjs)
+connects only Next 16.4.2 to the explicitly reviewed root dependency as an optional
+peer, preserving the other platform children and OS/CPU filtering. Copy that file
+to the application's `.pnpmfile.mjs`; keep `virtualStoreType: project` as the YAML
+fallback. Commit the resulting frozen lockfile and artifact integrity.
+
+The example enables the shared graph only for Apple Silicon development when
+both the framework and artifact declarations exactly match the reviewed pair.
+Other platforms, CI and changed versions use the supported project layout. Next
+should use its `turbopackAdditionalRoots()` export only in shared mode. That helper
+reads the installed graph's `virtualStoreDir`, supporting custom stores and CLI
+layout overrides without broadening the project root. A monorepo must validate
+all Next workspace versions and declare the optional binding in each consuming
+workspace so its native peer resolves there.
+
+No custom-binding environment variable is needed. Next loads the replacement
+through its ordinary native package entrypoint. Never replace an already released
+tarball. Publish a new release identifier for any binary change. Remove the native
+hook and artifact when an official Next.js version includes the fix and passes
+the same integration checks. The source fix is submitted as
+[vercel/next.js#100598](https://github.com/vercel/next.js/pull/100598).
+
+Validation includes the failing-before/passing-after external-loader fixture,
+production and development requests, external-resource edit invalidation, and a
+mocked OpenAI call emitting an automatic Sentry `gen_ai.chat` span with origin
+`auto.ai.openai`. The mock uses local fetch and a no-op telemetry transport: no
+paid provider request or telemetry upload is required.
 
 Upstream Next.js and this derivative are MIT licensed; see `LICENSE`.
